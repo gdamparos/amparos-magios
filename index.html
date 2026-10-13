@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMP · Casos</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1d1d1b;--muted:#6b6a66;--line:#e3e1dc;--acc:#1f5f8b;--acc2:#e8f0f6;--ok:#2e7d4f;--bad:#b23b3b}
+@media (prefers-color-scheme:dark){:root{--bg:#141414;--card:#1e1e1e;--ink:#eee;--muted:#9a9a9a;--line:#333;--acc:#6aa9d6;--acc2:#1d2a33}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+header h1{font-size:17px;margin:0;flex:1}header small{color:var(--muted)}
+main{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 12px;cursor:pointer}
+button.pri{background:var(--acc);border-color:var(--acc);color:#fff}button:disabled{opacity:.5}
+input,select,textarea{font:inherit;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 14px}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}.tabs button.on{background:var(--acc2);border-color:var(--acc)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600}td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer}tr.click:hover{background:var(--acc2)}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;background:var(--acc2);font-size:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+.msg{padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}.msg.err{background:#b23b3b22;color:var(--bad)}.msg.ok{background:#2e7d4f22;color:var(--ok)}
+.hide{display:none!important}.muted{color:var(--muted)}
+.scroll{overflow-x:auto}
+@media (max-width:640px){.hm{display:none}}
+</style>
+</head>
+<body>
+<header><h1>AMP</h1><small id="who"></small><button id="salir" class="hide">Salir</button></header>
+<main>
+  <section id="v-login" class="card" style="max-width:380px;margin:40px auto">
+    <h2 style="margin-top:0">Ingresar</h2>
+    <label>Email</label><input id="l-email" type="email" autocomplete="username">
+    <label>Contraseña</label><input id="l-pass" type="password" autocomplete="current-password">
+    <div id="l-msg"></div>
+    <p><button class="pri" id="l-btn" style="width:100%">Entrar</button></p>
+  </section>
+
+  <section id="v-app" class="hide">
+    <div class="tabs">
+      <button data-t="casos" class="on">Casos</button>
+      <button data-t="cuentas">Cuentas</button>
+      <button data-t="nuevo" id="t-nuevo">+ Nuevo caso</button>
+      <button data-t="consulta" id="t-consulta" class="hide">+ Nueva consulta</button>
+    </div>
+    <div id="msg"></div>
+
+    <div id="p-casos" class="card scroll">
+      <div class="row" style="margin-bottom:8px"><input id="f-buscar" placeholder="Buscar cliente o código…" style="max-width:280px">
+        <select id="f-etapa" style="max-width:180px"><option value="">Todas las etapas</option></select></div>
+      <table><thead><tr><th>Código</th><th>Cliente</th><th class="hm">Demandado</th><th>Etapa</th><th class="hm">Estado</th></tr></thead><tbody id="tb-casos"></tbody></table>
+    </div>
+
+    <div id="p-cuentas" class="card scroll hide">
+      <table><thead><tr><th>Código</th><th>Cliente</th><th class="n hm">Pactado</th><th class="n">Cobrado</th><th class="n hm">Gastos</th><th class="n">Neto</th><th class="n">Parte c/u</th></tr></thead><tbody id="tb-cuentas"></tbody>
+      <tfoot id="tf-cuentas"></tfoot></table>
+    </div>
+
+    <div id="p-nuevo" class="card hide">
+      <div class="row"><h3 style="margin:0" id="c-titulo">Nuevo caso</h3><span class="sp"></span><button id="c-volver">Volver</button></div>
+      <div class="grid">
+        <div><label>Cliente *</label><input id="c-cliente_nombre"></div>
+        <div><label>DNI</label><input id="c-cliente_dni"></div>
+        <div><label>Teléfono</label><input id="c-cliente_telefono"></div>
+        <div><label>Email</label><input id="c-cliente_email"></div>
+        <div><label>N° afiliado</label><input id="c-afiliado_nro"></div>
+        <div><label>Demandado</label><input id="c-demandado" list="dem"><datalist id="dem"><option>PAMI</option><option>OSEP</option></datalist></div>
+        <div><label>Etapa</label><select id="c-etapa"></select></div>
+        <div><label>Expediente</label><input id="c-expediente"></div>
+        <div><label>Juzgado</label><input id="c-juzgado"></div>
+        <div><label>Honorarios etapa administrativa</label><input id="c-hon_pactado_admin" type="number" step="0.01"></div>
+        <div><label>Honorarios etapa judicial</label><input id="c-hon_pactado_judicial" type="number" step="0.01"></div>
+        <div><label>Convenio firmado</label><select id="c-convenio_firmado"><option value="false">No</option><option value="true">Sí</option></select></div>
+      </div>
+      <label>Objeto</label><input id="c-objeto">
+      <label>Estado</label><input id="c-estado">
+      <label>Notas</label><textarea id="c-notas" rows="3"></textarea>
+      <p class="row"><button class="pri" id="c-guardar">Guardar</button><span class="muted" id="c-info"></span></p>
+
+      <div id="c-movs" class="hide">
+        <h3>Movimientos</h3>
+        <div class="scroll"><table><thead><tr><th>Fecha</th><th>Tipo</th><th class="hm">Etapa</th><th>Detalle</th><th class="n">Monto</th></tr></thead><tbody id="tb-movs"></tbody></table></div>
+        <div class="grid">
+          <div><label>Fecha</label><input id="m-fecha" type="date"></div>
+          <div><label>Tipo</label><select id="m-tipo"><option value="cobro">Cobro al cliente</option><option value="regulados_pami">Regulados a cargo de PAMI</option><option value="gasto">Gasto</option></select></div>
+          <div><label>Etapa</label><select id="m-etapa"><option value="">—</option><option>administrativa</option><option>judicial</option><option>ejecucion</option></select></div>
+          <div><label>Monto</label><input id="m-monto" type="number" step="0.01"></div>
+        </div>
+        <label>Detalle</label><input id="m-detalle">
+        <p><button class="pri" id="m-agregar">Agregar movimiento</button></p>
+      </div>
+    </div>
+
+    <div id="p-consulta" class="card hide">
+      <h3 style="margin-top:0">Nueva consulta</h3>
+      <div class="grid">
+        <div><label>Cliente *</label><input id="q-nombre"></div>
+        <div><label>Teléfono</label><input id="q-tel"></div>
+        <div><label>DNI</label><input id="q-dni"></div>
+        <div><label>Demandado</label><input id="q-dem" value="PAMI" list="dem"></div>
+      </div>
+      <label>Motivo</label><input id="q-objeto">
+      <p><button class="pri" id="q-guardar">Registrar</button></p>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL = 'https://qzopnidldijvlgjwdzbv.supabase.co';
+const SB_KEY = 'sb_publishable_WQnpEQbbLxSXyqClkK2qcw_CUvTSlHy';
+const sb = supabase.createClient(SB_URL, SB_KEY, { db: { schema: 'amp' } });
+const $ = id => document.getElementById(id);
+const ETAPAS = ['consulta','administrativa','judicial','ejecucion','cerrado','descartado'];
+const money = n => Number(n||0).toLocaleString('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0});
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let rol = null, casos = [], casoActual = null;
+
+ETAPAS.forEach(e => { $('f-etapa').add(new Option(e,e)); $('c-etapa').add(new Option(e,e)); });
+
+function aviso(t, tipo='err', el='msg'){ $(el).innerHTML = t ? `<div class="msg ${tipo}">${esc(t)}</div>` : ''; if(t && tipo==='ok') setTimeout(()=>$(el).innerHTML='',3000); }
+function tab(t){
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.t===t));
+  ['casos','cuentas','nuevo','consulta'].forEach(p=>$('p-'+p).classList.toggle('hide', p!==t));
+  aviso('');
+  if(t==='casos') cargarCasos();
+  if(t==='cuentas') cargarCuentas();
+  if(t==='nuevo' && !casoActual) abrirCaso(null);
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ if(b.dataset.t==='nuevo') casoActual=null; tab(b.dataset.t); });
+
+async function entrar(){
+  aviso('', 'err', 'l-msg');
+  $('l-btn').disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email: $('l-email').value.trim(), password: $('l-pass').value });
+  $('l-btn').disabled = false;
+  if(error) return aviso('No se pudo ingresar: ' + error.message, 'err', 'l-msg');
+  iniciar();
+}
+$('l-btn').onclick = entrar; $('l-pass').onkeydown = e => { if(e.key==='Enter') entrar(); };
+$('salir').onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+async function iniciar(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session) return;
+  const r = await sb.rpc('mi_rol');
+  if(r.error) { $('v-login').classList.remove('hide'); return aviso('Error de conexión: ' + r.error.message, 'err', 'l-msg'); }
+  rol = r.data;
+  if(!rol){ aviso('Tu usuario no tiene acceso.', 'err', 'l-msg'); await sb.auth.signOut(); return; }
+  $('who').textContent = session.user.email + ' · ' + rol;
+  $('v-login').classList.add('hide'); $('v-app').classList.remove('hide'); $('salir').classList.remove('hide');
+  const completo = rol !== 'colaborador';
+  $('t-nuevo').classList.toggle('hide', !completo);
+  $('t-consulta').classList.toggle('hide', completo);
+  tab('casos');
+}
+
+async function cargarCasos(){
+  const completo = rol !== 'colaborador';
+  const q = completo ? sb.from('casos').select('*').order('numero',{ascending:false})
+                     : sb.from('v_casos_resumen').select('*').order('codigo',{ascending:false});
+  const { data, error } = await q;
+  if(error) return aviso(error.message);
+  casos = data; pintarCasos();
+}
+function pintarCasos(){
+  const b = $('f-buscar').value.toLowerCase(), e = $('f-etapa').value;
+  const filas = casos.filter(c => (!e || c.etapa===e) && (!b || (c.codigo+' '+c.cliente_nombre).toLowerCase().includes(b)));
+  $('tb-casos').innerHTML = filas.map(c => `<tr class="${rol!=='colaborador'?'click':''}" data-id="${c.id}">
+    <td><b>${esc(c.codigo)}</b></td><td>${esc(c.cliente_nombre)}</td><td class="hm">${esc(c.demandado)}</td>
+    <td><span class="pill">${esc(c.etapa)}</span></td><td class="hm">${esc(c.estado)}</td></tr>`).join('')
+    || '<tr><td colspan="5" class="muted">Sin casos.</td></tr>';
+  if(rol!=='colaborador') document.querySelectorAll('#tb-casos tr.click').forEach(tr => tr.onclick = () => { casoActual = casos.find(c=>c.id===tr.dataset.id); tab('nuevo'); abrirCaso(casoActual); });
+}
+$('f-buscar').oninput = pintarCasos; $('f-etapa').onchange = pintarCasos;
+
+const CAMPOS = ['cliente_nombre','cliente_dni','cliente_telefono','cliente_email','afiliado_nro','demandado','etapa','expediente','juzgado','hon_pactado_admin','hon_pactado_judicial','convenio_firmado','objeto','estado','notas'];
+function abrirCaso(c){
+  casoActual = c;
+  $('c-titulo').textContent = c ? c.codigo + ' · ' + c.cliente_nombre : 'Nuevo caso';
+  CAMPOS.forEach(k => { $('c-'+k).value = c ? (c[k] ?? '') : (k==='demandado'?'PAMI':k==='etapa'?'consulta':k==='convenio_firmado'?'false':''); });
+  if(c) $('c-convenio_firmado').value = String(c.convenio_firmado);
+  $('c-info').textContent = c ? 'Alta: ' + new Date(c.creado_en).toLocaleDateString('es-AR') : '';
+  $('c-movs').classList.toggle('hide', !c);
+  $('m-fecha').value = new Date().toISOString().slice(0,10);
+  if(c) cargarMovs();
+}
+$('c-volver').onclick = () => { casoActual=null; tab('casos'); };
+$('c-guardar').onclick = async () => {
+  const fila = {};
+  CAMPOS.forEach(k => { let v = $('c-'+k).value.trim(); if(k.startsWith('hon_')) v = v===''?null:Number(v); else if(k==='convenio_firmado') v = v==='true'; else if(v==='' && k!=='cliente_nombre') v = null; fila[k]=v; });
+  if(!fila.cliente_nombre) return aviso('Falta el nombre del cliente.');
+  $('c-guardar').disabled = true;
+  const r = casoActual ? await sb.from('casos').update(fila).eq('id', casoActual.id).select().single()
+                       : await sb.from('casos').insert(fila).select().single();
+  $('c-guardar').disabled = false;
+  if(r.error) return aviso(r.error.message);
+  aviso('Guardado ' + r.data.codigo, 'ok'); abrirCaso(r.data);
+};
+
+async function cargarMovs(){
+  const { data, error } = await sb.from('movimientos').select('*').eq('caso_id', casoActual.id).order('fecha');
+  if(error) return aviso(error.message);
+  const T = {cobro:'Cobro',regulados_pami:'Regulados PAMI',gasto:'Gasto'};
+  $('tb-movs').innerHTML = data.map(m => `<tr><td>${new Date(m.fecha+'T12:00').toLocaleDateString('es-AR')}</td><td>${T[m.tipo]}</td><td class="hm">${esc(m.etapa)}</td><td>${esc(m.detalle)}</td><td class="n">${m.tipo==='gasto'?'−':''}${money(m.monto)}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">Sin movimientos.</td></tr>';
+}
+$('m-agregar').onclick = async () => {
+  const monto = Number($('m-monto').value);
+  if(!(monto>0)) return aviso('Monto inválido.');
+  const { error } = await sb.from('movimientos').insert({ caso_id: casoActual.id, fecha: $('m-fecha').value, tipo: $('m-tipo').value, etapa: $('m-etapa').value || null, monto, detalle: $('m-detalle').value.trim() || null });
+  if(error) return aviso(error.message);
+  $('m-monto').value=''; $('m-detalle').value=''; aviso('Movimiento agregado', 'ok'); cargarMovs();
+};
+
+async function cargarCuentas(){
+  const { data, error } = await sb.from('v_cuentas').select('*').order('codigo',{ascending:false});
+  if(error) return aviso(error.message);
+  const s = k => data.reduce((a,r)=>a+Number(r[k]||0),0);
+  $('tb-cuentas').innerHTML = data.map(r => `<tr><td><b>${esc(r.codigo)}</b></td><td>${esc(r.cliente_nombre)}</td><td class="n hm">${money(r.pactado_total)}</td><td class="n">${money(Number(r.cobrado_cliente)+Number(r.cobrado_pami))}</td><td class="n hm">${money(r.gastos)}</td><td class="n">${money(r.neto)}</td><td class="n"><b>${money(r.parte_cada_uno)}</b></td></tr>`).join('') || '<tr><td colspan="7" class="muted">Sin datos.</td></tr>';
+  $('tf-cuentas').innerHTML = `<tr><th colspan="2">Total</th><th class="n hm">${money(s('pactado_total'))}</th><th class="n">${money(s('cobrado_cliente')+s('cobrado_pami'))}</th><th class="n hm">${money(s('gastos'))}</th><th class="n">${money(s('neto'))}</th><th class="n">${money(s('parte_cada_uno'))}</th></tr>`;
+}
+
+$('q-guardar').onclick = async () => {
+  if(!$('q-nombre').value.trim()) return aviso('Falta el nombre del cliente.');
+  const { data, error } = await sb.rpc('nueva_consulta', { p_cliente_nombre: $('q-nombre').value.trim(), p_cliente_telefono: $('q-tel').value.trim()||null, p_cliente_dni: $('q-dni').value.trim()||null, p_demandado: $('q-dem').value.trim()||'PAMI', p_objeto: $('q-objeto').value.trim()||null });
+  if(error) return aviso(error.message);
+  ['q-nombre','q-tel','q-dni','q-objeto'].forEach(i=>$(i).value='');
+  aviso('Consulta registrada: ' + data, 'ok');
+};
+
+iniciar();
+</script>
+</body>
+</html>
